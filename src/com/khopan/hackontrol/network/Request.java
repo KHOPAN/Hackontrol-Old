@@ -1,7 +1,8 @@
-package com.khopan.hackontrol;
+package com.khopan.hackontrol.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.khopan.hackontrol.MachineId;
 
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
