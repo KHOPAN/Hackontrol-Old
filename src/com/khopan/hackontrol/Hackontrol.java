@@ -61,8 +61,9 @@ public class Hackontrol {
 			System.exit(1);
 		}
 
-		this.request = new Request(this.channel);
-		this.response = new Response(this.request);
+		MachineId identifier = MachineId.get();
+		this.request = new Request(this.channel, identifier);
+		this.response = new Response(this.request, identifier);
 		this.request.statusReport(true);
 	}
 

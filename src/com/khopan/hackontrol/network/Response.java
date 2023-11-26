@@ -12,13 +12,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.khopan.hackontrol.CommandPrompt;
+import com.khopan.hackontrol.MachineId;
 
 public class Response {
 	private final Request request;
+	private final MachineId identifier;
 	private final ObjectMapper mapper;
 
-	public Response(Request request) {
+	public Response(Request request, MachineId identifier) {
 		this.request = request;
+		this.identifier = identifier;
 		this.mapper = new ObjectMapper();
 	}
 
@@ -48,6 +51,20 @@ public class Response {
 		int mode = objectNode.get("requestMode").asInt(-1);
 
 		if(mode < 0) {
+			return;
+		}
+
+		MachineId identifier = null;
+
+		if(objectNode.has("machineId")) {
+			String identifierText = objectNode.get(mode).asText();
+
+			if(!identifierText.isEmpty()) {
+				identifier = new MachineId(identifierText);
+			}
+		}
+
+		if(identifier != null && !identifier.getIdentifier().equals(this.identifier.getIdentifier())) {
 			return;
 		}
 

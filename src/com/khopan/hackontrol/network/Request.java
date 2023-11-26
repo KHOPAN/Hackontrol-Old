@@ -15,9 +15,9 @@ public class Request {
 	private final MachineId identifier;
 	private final ObjectMapper mapper;
 
-	public Request(TextChannel channel) {
+	public Request(TextChannel channel, MachineId identifier) {
 		this.channel = channel;
-		this.identifier = MachineId.get();
+		this.identifier = identifier;
 		this.mapper = new ObjectMapper();
 	}
 
