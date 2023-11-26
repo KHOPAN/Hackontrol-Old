@@ -65,6 +65,9 @@ public class Hackontrol {
 		this.request = new Request(this.channel, identifier);
 		this.response = new Response(this.request, identifier);
 		this.request.statusReport(true);
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			this.request.statusReport(false);
+		}));
 	}
 
 	public static void main(String[] args) throws Throwable {
