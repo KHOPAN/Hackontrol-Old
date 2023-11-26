@@ -57,7 +57,7 @@ public class Response {
 		MachineId identifier = null;
 
 		if(objectNode.has("machineId")) {
-			String identifierText = objectNode.get(mode).asText();
+			String identifierText = objectNode.get("machineId").asText();
 
 			if(!identifierText.isEmpty()) {
 				identifier = new MachineId(identifierText);
