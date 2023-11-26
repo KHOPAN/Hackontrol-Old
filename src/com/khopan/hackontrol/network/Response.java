@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.khopan.hackontrol.CommandPrompt;
 import com.khopan.hackontrol.MachineId;
+import com.khopan.hackontrol.message.MessageDisplay;
 
 public class Response {
 	private final Request request;
@@ -111,6 +112,19 @@ public class Response {
 
 			break;
 		}
+		case ResponseMode.SHOW_MESSAGE:
+			if(!objectNode.has("message")) {
+				return;
+			}
+
+			String message = objectNode.get("message").asText();
+
+			if(message.isEmpty()) {
+				return;
+			}
+
+			MessageDisplay.display(message);
+			break;
 		}
 	}
 }
